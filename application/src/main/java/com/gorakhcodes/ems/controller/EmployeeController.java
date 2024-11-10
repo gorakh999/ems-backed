@@ -8,11 +8,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/employees")
 public class EmployeeController {
     private EmployeeService employeeService;
+
+    @GetMapping("/hello")
+    public String hello(){
+        return "Hello from Employee Management System";
+    }
 
     // Add Employee
     @PostMapping
@@ -28,8 +35,24 @@ public class EmployeeController {
         return new ResponseEntity<>(savedEmployee, HttpStatus.OK);
     }
 
-    @GetMapping("/hello")
-    public String hello(){
-        return "Hello from Employee Management System";
+    // Get All Employees
+    @GetMapping
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployees(){
+        List<EmployeeDTO> employeesList = employeeService.getAllEmployees();
+        return new ResponseEntity<>(employeesList, HttpStatus.OK);
+    }
+
+    // Update Employee By ID
+    @PutMapping("{id}")
+    public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable("id") Long employeeId, @RequestBody EmployeeDTO updatedEmployeeDto){
+        EmployeeDTO employeeDTO = employeeService.updateEmployee(employeeId, updatedEmployeeDto);
+        return new ResponseEntity<>(employeeDTO, HttpStatus.OK);
+    }
+
+    // Delete Employee By ID
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> deleteEmployee(@PathVariable("id") Long employeeId){
+        employeeService.deleteEmployee(employeeId);
+        return new ResponseEntity<>("Employee Deleted Successfully.", HttpStatus.OK);
     }
 }
